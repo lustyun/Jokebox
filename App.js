@@ -13,7 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function App() {
 	const [result, setResult] = useState({});
 	const [fav, setFav] = useState([]);
-	const [showFav, setShowFav] = useState(true);
+	const [showFav, setShowFav] = useState(false);
 
 	// Fetch initial joke
 	useEffect(() => {
