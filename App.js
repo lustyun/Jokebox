@@ -15,7 +15,7 @@ export default function App() {
 	const [fav, setFav] = useState([]);
 	const [showFav, setShowFav] = useState(false);
 
-	// Fetch initial joke
+	// Fetch initial joke and load favorite list from local storage
 	useEffect(() => {
 		fetchApiCall();
 		loadFavoriteList();
@@ -24,6 +24,8 @@ export default function App() {
 	// Refreshes the joke and fetches a new random one
 	const fetchApiCall = () => {
 		fetch(
+			// The original api endpoint in the project document wasn't working so
+			// I used another one that has the same data structure.
 			"https://nova-joke-api.netlify.app/.netlify/functions/index/random_joke",
 			{
 				method: "GET",
@@ -42,8 +44,11 @@ export default function App() {
 			await AsyncStorage.setItem("joke", JSON.stringify(newFav));
 		} catch (error) {
 			// Error saving data
+			console.log(error);
 		}
 	};
+
+	// Removes a specific joke and update local storage
 	const handleRemove = async (id) => {
 		const newFav = fav.filter((item) => item.id !== id);
 
@@ -71,7 +76,7 @@ export default function App() {
 		}
 	};
 
-	function FavList() {
+	const FavList = () => {
 		return (
 			<View style={styles.favPageContainer}>
 				<TouchableOpacity
@@ -82,12 +87,12 @@ export default function App() {
 				>
 					<Text style={styles.homepageButtonFontColor}> Back </Text>
 				</TouchableOpacity>
-
-				<ScrollView>
+				<ScrollView style={styles.scrollviewContainer}>
 					{fav.map((favorite, index) => {
 						return (
 							<View style={styles.favContainer} key={favorite.id}>
 								<View style={styles.favListContainer}>
+									<Text style={styles.punchline}>Type: {favorite.type}</Text>
 									<Text style={styles.titleText}>
 										{index + 1 + ". "}
 										{favorite.setup}
@@ -109,7 +114,7 @@ export default function App() {
 				</ScrollView>
 			</View>
 		);
-	}
+	};
 
 	return (
 		<ImageBackground
@@ -173,6 +178,7 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		fontSize: 50,
+		fontWeight: "bold",
 		marginBottom: 30,
 		color: "#cd1d49",
 	},
@@ -227,31 +233,31 @@ const styles = StyleSheet.create({
 		padding: 10,
 	},
 	deleteButton: {
-		margin: 10,
+		justifyContent: "center",
 	},
 	favPageContainer: {
+		width: "90%",
+		flexGrow: 1,
 		flex: 1,
 		padding: 20,
 		marginTop: 100,
 	},
+	scrollviewContainer: {
+		flex: 1,
+		marginTop: 10,
+	},
 	favContainer: {
+		flex: 1,
 		flexDirection: "row",
-		justifyContent: "center",
-		alignItems: "center",
-		padding: 5,
-		margin: 10,
-		marginVertical: 5,
+		backgroundColor: "white",
+		shadowOffset: { width: 0, height: 2 },
+		shadowRadius: 5,
+		shadowOpacity: 0.2,
+		borderRadius: 10,
+		margin: 5,
+		padding: 10,
 	},
 	favListContainer: {
-		shadowOffset: { width: 0, height: 2 },
-		shadowRadius: 6,
-		shadowOpacity: 0.1,
-		flexDirection: "row",
-		flexWrap: "wrap",
-		padding: 10,
-		margin: 10,
-		marginVertical: 0,
-		backgroundColor: "white",
-		borderRadius: 10,
+		flex: 1,
 	},
 });
